@@ -1,10 +1,12 @@
+import {Dispatch} from 'react';
 import type {Game} from '../interfaces';
+import type {CartActions} from '../reducers/cart-reducer';
 
 interface GameProp {
   game: Game;
-  addtoCart: (item: Game) => void;
+  dispatch: Dispatch<CartActions>;
 }
-export default function Game({game, addtoCart}: GameProp) {
+export default function Game({game, dispatch}: GameProp) {
   // console.log(game, 'Game state');
 
   const {name, price, image, description} = game;
@@ -26,7 +28,7 @@ export default function Game({game, addtoCart}: GameProp) {
         <button
           type="button"
           className="btn btn-dark w-100 "
-          onClick={() => addtoCart(game)}
+          onClick={() => dispatch({type: 'add-to-cart', payload: {item: game}})}
         >
           Add to cart
         </button>

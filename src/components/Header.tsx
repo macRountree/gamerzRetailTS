@@ -1,25 +1,36 @@
-import {CartItem, Game} from '../interfaces';
+import {Dispatch, useMemo} from 'react';
+import {CartItem} from '../interfaces';
+import {CartActions} from '../reducers/cart-reducer';
 
 interface HeaderProps {
   cart: CartItem[];
-  removeItemFromCart: (id: Game['id']) => void;
-  decreaseQuantity: (id: Game['id']) => void;
-  increaseQuantity: (id: Game['id']) => void;
-  clearCart: () => void;
-  isEmpty: boolean;
-  cartTotal: number;
+  // removeItemFromCart: (id: Game['id']) => void;
+  // decreaseQuantity: (id: Game['id']) => void;
+  // increaseQuantity: (id: Game['id']) => void;
+  // clearCart: () => void;
+  dispatch: Dispatch<CartActions>;
+  // isEmpty: boolean;
+  // cartTotal: number;
 }
 
 export default function Header({
   cart,
-  removeItemFromCart,
-  decreaseQuantity,
-  increaseQuantity,
-  clearCart,
-  isEmpty,
-  cartTotal,
-}: HeaderProps) {
+  // removeItemFromCart,
+  // decreaseQuantity,
+  // increaseQuantity,
+  // clearCart,
+  dispatch,
+}: // isEmpty,
+// cartTotal,
+HeaderProps) {
   //! Dont import the useCart hook here create new instanse of the hook
+
+  const isEmpty = useMemo(() => cart.length === 0, [cart]); //*Use memo looks like computed properties	from Vue
+  const cartTotal = useMemo(
+    () => cart.reduce((total, item) => total + item.quantity * item.price, 0),
+    [cart]
+  );
+
   return (
     <header className="py-5 header">
       <div className="container-xl">
@@ -73,7 +84,10 @@ export default function Header({
                                 type="button"
                                 className="btn btn-dark"
                                 onClick={() => {
-                                  decreaseQuantity(cartGameItem.id);
+                                  dispatch({
+                                    type: 'decrease-quantity',
+                                    payload: {id: cartGameItem.id},
+                                  });
                                 }}
                               >
                                 -
@@ -83,7 +97,10 @@ export default function Header({
                                 type="button"
                                 className="btn btn-dark"
                                 onClick={() =>
-                                  increaseQuantity(cartGameItem.id)
+                                  dispatch({
+                                    type: 'increase-quantity',
+                                    payload: {id: cartGameItem.id},
+                                  })
                                 }
                               >
                                 +
@@ -94,7 +111,10 @@ export default function Header({
                                 className="btn btn-danger"
                                 type="button"
                                 onClick={() =>
-                                  removeItemFromCart(cartGameItem.id)
+                                  dispatch({
+                                    type: 'remove-from-cart',
+                                    payload: {id: cartGameItem.id},
+                                  })
                                 }
                               >
                                 X
@@ -113,7 +133,7 @@ export default function Header({
 
                 <button
                   className="btn btn-dark w-100 mt-3 p-2"
-                  onClick={clearCart}
+                  onClick={() => dispatch({type: 'clear-cart'})}
                 >
                   Clear Cart
                 </button>
